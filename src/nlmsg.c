@@ -140,6 +140,7 @@ static int nfq_pkt_parse_attr_cb(const struct nlattr *attr, void *data)
 	case NFQA_SECCTX:
 	case NFQA_UID:
 	case NFQA_GID:
+	case NFQA_CT_INFO:
 		if (mnl_attr_validate(attr, MNL_TYPE_U32) < 0)
 			return MNL_CB_ERROR;
 		break;
@@ -155,7 +156,15 @@ static int nfq_pkt_parse_attr_cb(const struct nlattr *attr, void *data)
 			return MNL_CB_ERROR;
 		}
 		break;
+	case NFQA_PACKET_HDR:
+		if (mnl_attr_validate2(attr, MNL_TYPE_UNSPEC,
+		    sizeof(struct nfqnl_msg_packet_hdr)) < 0) {
+			return MNL_CB_ERROR;
+		}
+		break;
 	case NFQA_PAYLOAD:
+	case NFQA_CT:
+	case NFQA_EXP:
 		break;
 	}
 	tb[type] = attr;
