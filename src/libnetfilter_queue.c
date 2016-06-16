@@ -216,11 +216,6 @@ static int __nfq_rcv_pkt(struct nlmsghdr *nlh, struct nfattr *nfa[],
 	return qh->cb(qh, nfmsg, &nfqa, qh->data);
 }
 
-static struct nfnl_callback pkt_cb = {
-	.call		= &__nfq_rcv_pkt,
-	.attr_count	= NFQA_MAX,
-};
-
 /* public interface */
 
 struct nfnl_handle *nfq_nfnlh(struct nfq_handle *h)
@@ -389,6 +384,10 @@ EXPORT_SYMBOL(nfq_open);
  */
 struct nfq_handle *nfq_open_nfnl(struct nfnl_handle *nfnlh)
 {
+	struct nfnl_callback pkt_cb = {
+		.call		= __nfq_rcv_pkt,
+		.attr_count	= NFQA_MAX,
+	};
 	struct nfq_handle *h;
 	int err;
 
