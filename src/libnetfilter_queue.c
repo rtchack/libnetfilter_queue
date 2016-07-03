@@ -536,6 +536,8 @@ struct nfq_q_handle *nfq_create_queue(struct nfq_handle *h,
 		return NULL;
 
 	qh = malloc(sizeof(*qh));
+	if (!qh)
+		return NULL;
 
 	memset(qh, 0, sizeof(*qh));
 	qh->h = h;
