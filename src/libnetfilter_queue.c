@@ -32,7 +32,7 @@
 
 #include <libnfnetlink/libnfnetlink.h>
 #include <libnetfilter_queue/libnetfilter_queue.h>
-#include "src/internal.h"
+#include "internal.h"
 
 /**
  * \mainpage
