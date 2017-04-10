@@ -40,7 +40,7 @@
  * \note You have to call nfq_ip_set_transport_header or
  * nfq_ip6_set_transport_header first to access the TCP header.
  */
-struct tcphdr *nfq_tcp_get_hdr(struct pkt_buff *pktb)
+struct tcphdr __EXPORTED *nfq_tcp_get_hdr(struct pkt_buff *pktb)
 {
 	if (pktb->transport_header == NULL)
 		return NULL;
@@ -51,14 +51,13 @@ struct tcphdr *nfq_tcp_get_hdr(struct pkt_buff *pktb)
 
 	return (struct tcphdr *)pktb->transport_header;
 }
-EXPORT_SYMBOL(nfq_tcp_get_hdr);
 
 /**
  * nfq_tcp_get_payload - get the TCP packet payload
  * \param tcph: pointer to the TCP header
  * \param pktb: pointer to user-space network packet buffer
  */
-void *nfq_tcp_get_payload(struct tcphdr *tcph, struct pkt_buff *pktb)
+void __EXPORTED *nfq_tcp_get_payload(struct tcphdr *tcph, struct pkt_buff *pktb)
 {
 	unsigned int len = tcph->doff * 4;
 
@@ -72,47 +71,43 @@ void *nfq_tcp_get_payload(struct tcphdr *tcph, struct pkt_buff *pktb)
 
 	return pktb->transport_header + len;
 }
-EXPORT_SYMBOL(nfq_tcp_get_payload);
 
 /**
  * nfq_tcp_get_payload_len - get the tcp packet payload
  * \param tcph: pointer to the TCP header
  * \param pktb: pointer to user-space network packet buffer
  */
-unsigned int
+unsigned int __EXPORTED
 nfq_tcp_get_payload_len(struct tcphdr *tcph, struct pkt_buff *pktb)
 {
 	return pktb->tail - pktb->transport_header;
 }
-EXPORT_SYMBOL(nfq_tcp_get_payload_len);
 
 /**
  * nfq_tcp_set_checksum_ipv4 - computes IPv4/TCP packet checksum
  * \param tcph: pointer to the TCP header
  * \param iph: pointer to the IPv4 header
  */
-void
+void __EXPORTED
 nfq_tcp_compute_checksum_ipv4(struct tcphdr *tcph, struct iphdr *iph)
 {
 	/* checksum field in header needs to be zero for calculation. */
 	tcph->check = 0;
 	tcph->check = nfq_checksum_tcpudp_ipv4(iph);
 }
-EXPORT_SYMBOL(nfq_tcp_compute_checksum_ipv4);
 
 /**
  * nfq_tcp_set_checksum_ipv6 - computes IPv6/TCP packet checksum
  * \param tcph: pointer to the TCP header
  * \param iph: pointer to the IPv6 header
  */
-void
+void __EXPORTED
 nfq_tcp_compute_checksum_ipv6(struct tcphdr *tcph, struct ip6_hdr *ip6h)
 {
 	/* checksum field in header needs to be zero for calculation. */
 	tcph->check = 0;
 	tcph->check = nfq_checksum_tcpudp_ipv6(ip6h, tcph);
 }
-EXPORT_SYMBOL(nfq_tcp_compute_checksum_ipv6);
 
 /*
  *	The union cast uses a gcc extension to avoid aliasing problems
@@ -134,7 +129,7 @@ union tcp_word_hdr {
  * \param tcp: pointer to a valid tcp header.
  *
  */
-int nfq_tcp_snprintf(char *buf, size_t size, const struct tcphdr *tcph)
+int __EXPORTED nfq_tcp_snprintf(char *buf, size_t size, const struct tcphdr *tcph)
 {
 	int ret, len = 0;
 
@@ -177,7 +172,6 @@ int nfq_tcp_snprintf(char *buf, size_t size, const struct tcphdr *tcph)
 
 	return ret;
 }
-EXPORT_SYMBOL(nfq_tcp_snprintf);
 
 /**
  * nfq_tcp_mangle_ipv4 - mangle TCP/IPv4 packet buffer
@@ -189,7 +183,7 @@ EXPORT_SYMBOL(nfq_tcp_snprintf);
  *
  * \note This function recalculates the IPv4 and TCP checksums for you.
  */
-int
+int __EXPORTED
 nfq_tcp_mangle_ipv4(struct pkt_buff *pkt,
 		    unsigned int match_offset, unsigned int match_len,
 		    const char *rep_buffer, unsigned int rep_len)
@@ -208,7 +202,6 @@ nfq_tcp_mangle_ipv4(struct pkt_buff *pkt,
 
 	return 1;
 }
-EXPORT_SYMBOL(nfq_tcp_mangle_ipv4);
 
 /**
  * @}

@@ -5,10 +5,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 #ifdef HAVE_VISIBILITY_HIDDEN
-#	define __visible	__attribute__((visibility("default")))
-#	define EXPORT_SYMBOL(x)	typeof(x) (x) __visible
+#	define __EXPORTED	__attribute__((visibility("default")))
 #else
-#	define EXPORT_SYMBOL
+#	define __EXPORTED
 #endif
 
 struct iphdr;
