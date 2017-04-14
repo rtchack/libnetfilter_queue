@@ -33,7 +33,7 @@
  * This funcion returns NULL if an invalid header is found. On sucess, it
  * returns a valid pointer to the header.
  */
-struct ip6_hdr __EXPORTED *nfq_ip6_get_hdr(struct pkt_buff *pktb)
+struct ip6_hdr *nfq_ip6_get_hdr(struct pkt_buff *pktb)
 {
 	struct ip6_hdr *ip6h;
 	unsigned int pktlen = pktb->tail - pktb->network_header;
@@ -50,6 +50,7 @@ struct ip6_hdr __EXPORTED *nfq_ip6_get_hdr(struct pkt_buff *pktb)
 
 	return ip6h;
 }
+EXPORT_SYMBOL(nfq_ip6_get_hdr);
 
 /**
  * nfq_ip6_set_transport_header - set transport header pointer for IPv6 packet
@@ -60,7 +61,7 @@ struct ip6_hdr __EXPORTED *nfq_ip6_get_hdr(struct pkt_buff *pktb)
  * This function returns 1 if the protocol has been found and the transport
  * header has been set. Otherwise, it returns 0.
  */
-int __EXPORTED nfq_ip6_set_transport_header(struct pkt_buff *pktb, struct ip6_hdr *ip6h,
+int nfq_ip6_set_transport_header(struct pkt_buff *pktb, struct ip6_hdr *ip6h,
 				 uint8_t target)
 {
 	uint8_t nexthdr = ip6h->ip6_nxt;
@@ -114,6 +115,7 @@ int __EXPORTED nfq_ip6_set_transport_header(struct pkt_buff *pktb, struct ip6_hd
 	pktb->transport_header = cur;
 	return cur ? 1 : 0;
 }
+EXPORT_SYMBOL(nfq_ip6_set_transport_header);
 
 /**
  * nfq_ip6_snprintf - print IPv6 header into one buffer in iptables LOG format
@@ -122,7 +124,7 @@ int __EXPORTED nfq_ip6_set_transport_header(struct pkt_buff *pktb, struct ip6_hd
  * \param ip6_hdr: pointer to a valid IPv6 header.
  *
  */
-int __EXPORTED nfq_ip6_snprintf(char *buf, size_t size, const struct ip6_hdr *ip6h)
+int nfq_ip6_snprintf(char *buf, size_t size, const struct ip6_hdr *ip6h)
 {
 	int ret;
 	char src[INET6_ADDRSTRLEN];
@@ -141,6 +143,7 @@ int __EXPORTED nfq_ip6_snprintf(char *buf, size_t size, const struct ip6_hdr *ip
 
 	return ret;
 }
+EXPORT_SYMBOL(nfq_ip6_snprintf);
 
 /**
  * @}

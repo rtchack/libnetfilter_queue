@@ -30,7 +30,7 @@
  * @{
  */
 
-void __EXPORTED nfq_nlmsg_verdict_put(struct nlmsghdr *nlh, int id, int verdict)
+void nfq_nlmsg_verdict_put(struct nlmsghdr *nlh, int id, int verdict)
 {
 	struct nfqnl_msg_verdict_hdr vh = {
 		.verdict	= htonl(verdict),
@@ -38,17 +38,20 @@ void __EXPORTED nfq_nlmsg_verdict_put(struct nlmsghdr *nlh, int id, int verdict)
 	};
 	mnl_attr_put(nlh, NFQA_VERDICT_HDR, sizeof(vh), &vh);
 }
+EXPORT_SYMBOL(nfq_nlmsg_verdict_put);
 
-void __EXPORTED nfq_nlmsg_verdict_put_mark(struct nlmsghdr *nlh, uint32_t mark)
+void nfq_nlmsg_verdict_put_mark(struct nlmsghdr *nlh, uint32_t mark)
 {
 	mnl_attr_put_u32(nlh, NFQA_MARK, htonl(mark));
 }
+EXPORT_SYMBOL(nfq_nlmsg_verdict_put_mark);
 
-void __EXPORTED
+void
 nfq_nlmsg_verdict_put_pkt(struct nlmsghdr *nlh, const void *pkt, uint32_t plen)
 {
 	mnl_attr_put(nlh, NFQA_PAYLOAD, plen, pkt);
 }
+EXPORT_SYMBOL(nfq_nlmsg_verdict_put_pkt);
 
 /**
  * @}
@@ -82,7 +85,7 @@ nfq_nlmsg_verdict_put_pkt(struct nlmsghdr *nlh, const void *pkt, uint32_t plen)
  *   given protocol family.  Both commands are ignored by Linux kernel 3.8 and
  *   later versions.
  */
-void __EXPORTED nfq_nlmsg_cfg_put_cmd(struct nlmsghdr *nlh, uint16_t pf, uint8_t cmd)
+void nfq_nlmsg_cfg_put_cmd(struct nlmsghdr *nlh, uint16_t pf, uint8_t cmd)
 {
 	struct nfqnl_msg_config_cmd command = {
 		.command = cmd,
@@ -90,8 +93,9 @@ void __EXPORTED nfq_nlmsg_cfg_put_cmd(struct nlmsghdr *nlh, uint16_t pf, uint8_t
 	};
 	mnl_attr_put(nlh, NFQA_CFG_CMD, sizeof(command), &command);
 }
+EXPORT_SYMBOL(nfq_nlmsg_cfg_put_cmd);
 
-void __EXPORTED nfq_nlmsg_cfg_put_params(struct nlmsghdr *nlh, uint8_t mode, int range)
+void nfq_nlmsg_cfg_put_params(struct nlmsghdr *nlh, uint8_t mode, int range)
 {
 	struct nfqnl_msg_config_params params = {
 		.copy_range = htonl(range),
@@ -99,11 +103,13 @@ void __EXPORTED nfq_nlmsg_cfg_put_params(struct nlmsghdr *nlh, uint8_t mode, int
 	};
 	mnl_attr_put(nlh, NFQA_CFG_PARAMS, sizeof(params), &params);
 }
+EXPORT_SYMBOL(nfq_nlmsg_cfg_put_params);
 
-void __EXPORTED nfq_nlmsg_cfg_put_qmaxlen(struct nlmsghdr *nlh, uint32_t queue_maxlen)
+void nfq_nlmsg_cfg_put_qmaxlen(struct nlmsghdr *nlh, uint32_t queue_maxlen)
 {
 	mnl_attr_put_u32(nlh, NFQA_CFG_QUEUE_MAXLEN, htonl(queue_maxlen));
 }
+EXPORT_SYMBOL(nfq_nlmsg_cfg_put_qmaxlen);
 
 /**
  * @}
@@ -173,11 +179,12 @@ static int nfq_pkt_parse_attr_cb(const struct nlattr *attr, void *data)
  * This function returns MNL_CB_ERROR if any error occurs, or MNL_CB_OK on
  * success.
  */
-int __EXPORTED nfq_nlmsg_parse(const struct nlmsghdr *nlh, struct nlattr **attr)
+int nfq_nlmsg_parse(const struct nlmsghdr *nlh, struct nlattr **attr)
 {
 	return mnl_attr_parse(nlh, sizeof(struct nfgenmsg),
 			      nfq_pkt_parse_attr_cb, attr);
 }
+EXPORT_SYMBOL(nfq_nlmsg_parse);
 
 /**
  * @}

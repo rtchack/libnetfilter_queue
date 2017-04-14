@@ -32,7 +32,7 @@
  * This funcion returns NULL if the IPv4 is malformed or the protocol version
  * is not 4. On success, it returns a valid pointer to the IPv4 header.
  */
-struct iphdr __EXPORTED *nfq_ip_get_hdr(struct pkt_buff *pktb)
+struct iphdr *nfq_ip_get_hdr(struct pkt_buff *pktb)
 {
 	struct iphdr *iph;
 	unsigned int pktlen = pktb->tail - pktb->network_header;
@@ -53,13 +53,14 @@ struct iphdr __EXPORTED *nfq_ip_get_hdr(struct pkt_buff *pktb)
 
 	return iph;
 }
+EXPORT_SYMBOL(nfq_ip_get_hdr);
 
 /**
  * nfq_ip_set_transport_header - set transport header
  * \param pktb: pointer to network packet buffer
  * \param iph: pointer to the IPv4 header
  */
-int __EXPORTED nfq_ip_set_transport_header(struct pkt_buff *pktb, struct iphdr *iph)
+int nfq_ip_set_transport_header(struct pkt_buff *pktb, struct iphdr *iph)
 {
 	int doff = iph->ihl * 4;
 
@@ -70,6 +71,7 @@ int __EXPORTED nfq_ip_set_transport_header(struct pkt_buff *pktb, struct iphdr *
 	pktb->transport_header = pktb->network_header + doff;
 	return 0;
 }
+EXPORT_SYMBOL(nfq_ip_set_transport_header);
 
 /**
  * nfq_ip_set_checksum - set IPv4 checksum
@@ -78,13 +80,14 @@ int __EXPORTED nfq_ip_set_transport_header(struct pkt_buff *pktb, struct iphdr *
  * \note Call to this function if you modified the IPv4 header to update the
  * checksum.
  */
-void __EXPORTED nfq_ip_set_checksum(struct iphdr *iph)
+void nfq_ip_set_checksum(struct iphdr *iph)
 {
 	uint32_t iph_len = iph->ihl * 4;
 
 	iph->check = 0;
 	iph->check = nfq_checksum(0, (uint16_t *)iph, iph_len);
 }
+EXPORT_SYMBOL(nfq_ip_set_checksum);
 
 /**
  * nfq_ip_mangle - mangle IPv4 packet buffer
@@ -97,7 +100,7 @@ void __EXPORTED nfq_ip_set_checksum(struct iphdr *iph)
  *
  * \note This function recalculates the IPv4 checksum (if needed).
  */
-int __EXPORTED nfq_ip_mangle(struct pkt_buff *pkt, unsigned int dataoff,
+int nfq_ip_mangle(struct pkt_buff *pkt, unsigned int dataoff,
 		  unsigned int match_offset, unsigned int match_len,
 		  const char *rep_buffer, unsigned int rep_len)
 {
@@ -113,6 +116,7 @@ int __EXPORTED nfq_ip_mangle(struct pkt_buff *pkt, unsigned int dataoff,
 
 	return 1;
 }
+EXPORT_SYMBOL(nfq_ip_mangle);
 
 /**
  * nfq_pkt_snprintf_ip - print IPv4 header into buffer in iptables LOG format
@@ -124,7 +128,7 @@ int __EXPORTED nfq_ip_mangle(struct pkt_buff *pkt, unsigned int dataoff,
  * case that there is enough room in the buffer. Read snprintf manpage for more
  * information to know more about this strange behaviour.
  */
-int __EXPORTED nfq_ip_snprintf(char *buf, size_t size, const struct iphdr *iph)
+int nfq_ip_snprintf(char *buf, size_t size, const struct iphdr *iph)
 {
 	int ret;
 	struct in_addr src = { iph->saddr };
@@ -143,6 +147,7 @@ int __EXPORTED nfq_ip_snprintf(char *buf, size_t size, const struct iphdr *iph)
 
 	return ret;
 }
+EXPORT_SYMBOL(nfq_ip_snprintf);
 
 /**
  * @}
