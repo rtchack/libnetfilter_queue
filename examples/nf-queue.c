@@ -15,6 +15,9 @@
 
 #include <libnetfilter_queue/libnetfilter_queue.h>
 
+/* only for NFQA_CT, not needed otherwise: */
+#include <linux/netfilter/nfnetlink_conntrack.h>
+
 static struct mnl_socket *nl;
 
 static struct nlmsghdr *
@@ -37,9 +40,20 @@ nfq_send_verdict(int queue_num, uint32_t id)
 {
 	char buf[MNL_SOCKET_BUFFER_SIZE];
 	struct nlmsghdr *nlh;
+	struct nlattr *nest;
 
 	nlh = nfq_hdr_put(buf, NFQNL_MSG_VERDICT, queue_num);
 	nfq_nlmsg_verdict_put(nlh, id, NF_ACCEPT);
+
+	/* example to set the connmark. First, start NFQA_CT section: */
+	nest = mnl_attr_nest_start(nlh, NFQA_CT);
+
+	/* then, add the connmark attribute: */
+	mnl_attr_put_u32(nlh, CTA_MARK, htonl(42));
+	/* more conntrack attributes, e.g. CTA_LABEL, could be set here */
+
+	/* end conntrack section */
+	mnl_attr_nest_end(nlh, nest);
 
 	if (mnl_socket_sendto(nl, nlh, nlh->nlmsg_len) < 0) {
 		perror("mnl_socket_send");
