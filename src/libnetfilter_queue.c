@@ -657,7 +657,16 @@ EXPORT_SYMBOL(nfq_set_mode);
  *
  * - NFQA_CFG_F_GSO (requires Linux kernel >= 3.10): the kernel will
  *   not normalize offload packets, i.e. your application will need to
- *   be able to handle packets larger than the mtu (up to 64k).
+ *   be able to handle packets larger than the mtu.
+ *
+ *   Normalization is expensive, so this flag should always be set.
+ *   Because attributes in netlink messages are limited to 65531 bytes,
+ *   you also need to check the NFQA_CAP_LEN attribute, it contains the
+ *   original size of the captured packet on the kernel side.
+ *   If it is set and differs  from the payload length, the packet was
+ *   truncated.  This also happens when limiting capture size
+ *   with the NFQNL_COPY_PACKET setting, or when e.g. a local user
+ *   sends a very large packet.
  *
  *   If your application validates checksums (e.g., tcp checksum),
  *   then you must also check if the NFQA_SKB_INFO attribute is present.
@@ -671,6 +680,8 @@ EXPORT_SYMBOL(nfq_set_mode);
 \endverbatim
  *  if this bit is set, the layer 3/4 checksums of the packet appear incorrect,
  *  but are not (because they will be corrected later by the kernel).
+ *  Please see example/nf-queue.c in the libnetfilter_queue source for more
+ *  details.
  *
  *  - NFQA_CFG_F_UID_GID: the kernel will dump UID and GID of the socket to
  *  which each packet belongs.
