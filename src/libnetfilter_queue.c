@@ -698,6 +698,13 @@ EXPORT_SYMBOL(nfq_set_mode);
 	flags &= ~NFQA_CFG_F_FAIL_OPEN;
 	err = nfq_set_queue_flags(qh, mask, flags);
 \endverbatim
+ *  - NFQA_CFG_F_SECCTX: the kernel will dump security context of the socket to
+ *  which each packet belongs.
+ *
+ *  \warning
+ *  When fragmentation occurs and NFQA_CFG_F_GSO is NOT set then the kernel
+ *  dumps UID/GID and security context fields only for one fragment. To deal
+ *  with this limitation always set NFQA_CFG_F_GSO.
  *
  * \return -1 on error with errno set appropriately; =0 otherwise.
  */
@@ -1202,6 +1209,10 @@ EXPORT_SYMBOL(nfq_get_packet_hw);
  * nfq_get_uid - get the UID of the user the packet belongs to
  * \param nfad Netlink packet data handle passed to callback function
  *
+ * \warning If the NFQA_CFG_F_GSO flag is not set, then fragmented packets
+ * may be pushed into the queue. In this case, only one fragment will have the
+ * UID field set. To deal with this issue always set NFQA_CFG_F_GSO.
+ *
  * \return 1 if there is a UID available, 0 otherwise.
  */
 int nfq_get_uid(struct nfq_data *nfad, uint32_t *uid)
@@ -1218,6 +1229,10 @@ EXPORT_SYMBOL(nfq_get_uid);
  * nfq_get_gid - get the GID of the user the packet belongs to
  * \param nfad Netlink packet data handle passed to callback function
  *
+ * \warning If the NFQA_CFG_F_GSO flag is not set, then fragmented packets
+ * may be pushed into the queue. In this case, only one fragment will have the
+ * GID field set. To deal with this issue always set NFQA_CFG_F_GSO.
+ *
  * \return 1 if there is a GID available, 0 otherwise.
  */
 int nfq_get_gid(struct nfq_data *nfad, uint32_t *gid)
@@ -1230,11 +1245,14 @@ int nfq_get_gid(struct nfq_data *nfad, uint32_t *gid)
 }
 EXPORT_SYMBOL(nfq_get_gid);
 
-
 /**
  * nfq_get_secctx - get the security context for this packet
  * \param nfad Netlink packet data handle passed to callback function
  * \param secdata data to write the security context to
+ *
+ * \warning If the NFQA_CFG_F_GSO flag is not set, then fragmented packets
+ * may be pushed into the queue. In this case, only one fragment will have the
+ * SECCTX field set. To deal with this issue always set NFQA_CFG_F_GSO.
  *
  * \return -1 on error, otherwise > 0
  */
